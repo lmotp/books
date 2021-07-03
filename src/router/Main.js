@@ -1,19 +1,19 @@
 import React from 'react';
-import Bgimage from '../components/Bgimage';
-import Bgmusic from '../components/Bgmusic';
-import { useUsersState } from '../Users';
+import { Link } from 'react-router-dom';
+import { useAuthContext } from '../Users';
 
 const Main = () => {
-  const context = useUsersState();
-  const { categories } = context;
-  console.log(categories[0]);
+  const { logout } = useAuthContext();
+
+  const handleLogOut = () => {
+    logout();
+  };
   return (
     <>
-      {categories.map((category) => (
-        <button key={category.id}>{category.category}</button>
-      ))}
-      <Bgimage />
-      <Bgmusic />
+      <Link to="/signup">
+        <button>회원가입하러가기 </button>
+      </Link>
+      <button onClick={handleLogOut}>로그아웃</button>
     </>
   );
 };

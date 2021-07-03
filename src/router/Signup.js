@@ -2,30 +2,35 @@ import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../Users';
 import { Link, useHistory } from 'react-router-dom';
 
-export default function Login() {
+export default function Signup() {
+  const passWordConfirmRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { login } = useAuthContext();
+  const { signup } = useAuthContext();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (passwordRef.current.value !== passWordConfirmRef.current.value) {
+      return setError('Passwords do not match');
+    }
     try {
       setError('');
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
+      await signup(emailRef.current.value, passwordRef.current.value);
       history.push('/');
     } catch {
-      setError('Failed to Log in');
+      setError('Failed to create an account');
     }
     setLoading(false);
   };
 
   return (
     <>
-      <h2>Log in</h2>
+      <h2>Sign up</h2>
       <div>{error}</div>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">
@@ -36,13 +41,17 @@ export default function Login() {
           Password
           <input type="password" ref={passwordRef} id="password" required></input>
         </label>
+        <label htmlFor="password-confirm">
+          Password Confirmation
+          <input type="password" ref={passWordConfirmRef} id="password-confirm" required></input>
+        </label>
         <button disabled={loading} type="submit">
-          Log in
+          Sign up
         </button>
       </form>
 
       <div>
-        Need an account?<Link to="/signup">Sign Up</Link>
+        Already have an account? <Link to="/login">Log In</Link>
       </div>
     </>
   );

@@ -1,4 +1,5 @@
-import React, { useContext, useReducer, createContext } from 'react';
+import React, { useContext, useReducer, createContext, useState, useEffect } from 'react';
+import { auth } from './firebase';
 
 const initializer = {
   categories: [
@@ -21,16 +22,44 @@ const reducer = (state, action) => {
 
 const UserStateContext = createContext();
 const UsersDispatchContext = createContext();
+const AuthContext = createContext();
 
 export const Users = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initializer);
+  const [currentUser, setCurrentUser] = useState();
+  const [loading, setLoading] = useState(true);
 
-  console.log(state);
+  const signup = (email, password) => {
+    return auth.createUserWithEmailAndPassword(email, password);
+  };
+  const login = (email, password) => {
+    return auth.signInWithEmailAndPassword(email, password);
+  };
+  const logout = () => {
+    return auth.signOut();
+  };
+
+  useEffect(() => {
+    const authStateChange = auth.onAuthStateChanged((user) => {
+      setCurrentUser(user);
+      setLoading(false);
+    });
+    return authStateChange;
+  }, []);
+
+  const users = {
+    currentUser,
+    signup,
+    login,
+    logout,
+  };
 
   return (
-    <UserStateContext.Provider value={state}>
-      <UsersDispatchContext.Provider value={dispatch}>{children}</UsersDispatchContext.Provider>
-    </UserStateContext.Provider>
+    <AuthContext.Provider value={users}>
+      <UserStateContext.Provider value={state}>
+        <UsersDispatchContext.Provider value={dispatch}>{!loading && children}</UsersDispatchContext.Provider>
+      </UserStateContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
@@ -41,5 +70,10 @@ export function useUsersState() {
 
 export function useUsersDispatch() {
   const context = useContext(UsersDispatchContext);
+  return context;
+}
+
+export function useAuthContext() {
+  const context = useContext(AuthContext);
   return context;
 }
