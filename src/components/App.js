@@ -5,6 +5,7 @@ import Login from '../router/Login';
 import Signup from '../router/Signup';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Users } from '../Users';
+import First from '../router/First';
 
 const App = () => {
   return (
@@ -12,7 +13,8 @@ const App = () => {
       <Users>
         <BrowserRouter>
           <Switch>
-            <Route exact path="/" component={Main} />
+            <Route exact path="/" component={First} />
+            <Route path="/main" component={Main} />
             <Route path="/signup" component={Signup} />
             <Route path="/login" component={Login} />
             <Route component={PageNotFound} />
