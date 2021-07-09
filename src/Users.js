@@ -3,12 +3,19 @@ import { auth } from './firebase';
 
 const initializer = {
   categories: [
-    { id: 1, category: '로맨스' },
-    { id: 2, category: '드라마' },
-    { id: 3, category: '코미디' },
+    { id: 1, category: '비발디' },
+    { id: 2, category: '베토벤' },
+    { id: 3, category: '모차르트' },
     { id: 4, category: '액션' },
     { id: 5, category: '공포' },
     { id: 6, category: '스릴러' },
+  ],
+  select: [
+    { id: 1, category: 'PLih16QaoQoPeQi0fNFAM2ARd904YSuzOC' },
+    { id: 2, category: 'PLih16QaoQoPcHvLAFtMMFFDv2aZm71ipm' },
+    { id: 3, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
+    { id: 4, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
+    { id: 5, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
   ],
 };
 const reducer = (state, action) => {
