@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthContext } from '../Users';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import Youtube from 'react-youtube';
 import { useUsersState } from '../Users';
+import { firestore } from '../firebase';
+import '../styles/Main.css';
+
 dotenv.config();
 
 const Main = () => {
-  const { logout } = useAuthContext();
+  const { logout, currentUser } = useAuthContext();
   const state = useUsersState();
   const { categories } = state;
   const { select } = state;
+
+  console.log(currentUser);
 
   const [items, setItems] = useState([]);
   const [number, setNumber] = useState(0);
   const [start, setStart] = useState(false);
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
+  const [value, setValue] = useState('');
+  const [write, setWrite] = useState([]);
 
   // 에피아이 받기
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -38,6 +45,9 @@ const Main = () => {
   const opts = {
     width: '640',
     height: '390',
+    playerVars: {
+      autoplay: 1,
+    },
   };
 
   // 카테고리 고르기
@@ -62,9 +72,7 @@ const Main = () => {
 
   // 시작하고 멈추기
   const videoOnReady = (event) => {
-    event.target.playVideo();
     setPlayerPlayVideo(event);
-    console.log(event);
   };
 
   const clickPlay = () => {
@@ -75,23 +83,61 @@ const Main = () => {
     playerPlayVideo.target.pauseVideo();
   };
 
+  // 메모장기능
+  const changeValue = (e) => {
+    const {
+      target: { value },
+    } = e;
+    setValue(value);
+  };
+  // 글쓰기
+  const submitHandler = (e) => {
+    e.preventDefault();
+    firestore.collection('cities').add({
+      value,
+      createAt: Date.now(),
+      createId: currentUser.uid,
+    });
+    setValue('');
+  };
+
+  // 글가져오기
+  const getValue = async () => {
+    const write = await firestore.collection('cities').get();
+    write.forEach((document) => {
+      const newObj = {
+        ...document.data(),
+        id: document.id,
+      };
+      setWrite((prev) => [newObj, ...prev]);
+    });
+  };
+
+  useEffect(() => {
+    getValue();
+    return () => {
+      getValue();
+      console.log('hi');
+    };
+  }, []);
+
+  console.log(write);
+
   return (
     <>
       {start &&
         items
-          .filter((v, i) => i === 0)
+          .filter((v) => {
+            return v.snippet.position === 0;
+          })
           .map((item) => {
-            const { id, snippet = {} } = item;
-            const { title, thumbnails = {}, resourceId = {} } = snippet;
-            const { medium = {} } = thumbnails;
-            const { videoId } = resourceId;
-            return (
-              <li key={id}>
-                <img width={medium.width} height={medium.height} src={medium.url} alt="썸네일" />
-                <Youtube opts={opts} videoId={videoId} onReady={videoOnReady} />
-                <h3>{title}</h3>
-              </li>
-            );
+            const {
+              id,
+              snippet: {
+                resourceId: { videoId },
+              },
+            } = item;
+            return <Youtube key={id} opts={opts} videoId={videoId} onReady={videoOnReady} className="youtube-player" />;
           })}
 
       {categories.map((category) => (
@@ -107,6 +153,16 @@ const Main = () => {
         <button>회원가입하러가기 </button>
       </Link>
       <button onClick={handleLogOut}>로그아웃</button>
+
+      <form onSubmit={submitHandler}>
+        <input type="text" value={value} onChange={changeValue} />
+        <button>보내기</button>
+      </form>
+      <div>
+        {write.map((write) => (
+          <div key={write.id}>{write.value}</div>
+        ))}
+      </div>
     </>
   );
 };

@@ -6,16 +6,11 @@ const initializer = {
     { id: 1, category: '비발디' },
     { id: 2, category: '베토벤' },
     { id: 3, category: '모차르트' },
-    { id: 4, category: '액션' },
-    { id: 5, category: '공포' },
-    { id: 6, category: '스릴러' },
   ],
   select: [
     { id: 1, category: 'PLih16QaoQoPeQi0fNFAM2ARd904YSuzOC' },
     { id: 2, category: 'PLih16QaoQoPcHvLAFtMMFFDv2aZm71ipm' },
     { id: 3, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
-    { id: 4, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
-    { id: 5, category: 'PLih16QaoQoPcoHcobmayWb6ijKeMjdds5' },
   ],
 };
 const reducer = (state, action) => {
@@ -35,7 +30,7 @@ export const Users = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initializer);
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-
+  const [userObj, setUserObj] = useState(null);
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
   };
@@ -50,6 +45,7 @@ export const Users = ({ children }) => {
     const authStateChange = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
       setLoading(false);
+      setUserObj(user);
     });
     return authStateChange;
   }, []);

@@ -1,0 +1,9 @@
+.youtube-player {
+  display: none;
+}
+
+button {
+  background-color: rgba(0, 0, 0, 0.5);
+  outline: none;
+  padding: 10px 20px;
+}
