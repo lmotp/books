@@ -6,23 +6,22 @@ import axios from 'axios';
 import Youtube from 'react-youtube';
 import { useUsersState } from '../Users';
 import { firestore } from '../firebase';
+import Form from '../components/Form';
+import Write from '../components/Write';
 import '../styles/Main.css';
 
 dotenv.config();
 
 const Main = () => {
-  const { logout, currentUser } = useAuthContext();
+  const { logout } = useAuthContext();
   const state = useUsersState();
   const { categories } = state;
   const { select } = state;
-
-  console.log(currentUser);
 
   const [items, setItems] = useState([]);
   const [number, setNumber] = useState(0);
   const [start, setStart] = useState(false);
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
-  const [value, setValue] = useState('');
   const [write, setWrite] = useState([]);
 
   // 에피아이 받기
@@ -83,45 +82,17 @@ const Main = () => {
     playerPlayVideo.target.pauseVideo();
   };
 
-  // 메모장기능
-  const changeValue = (e) => {
-    const {
-      target: { value },
-    } = e;
-    setValue(value);
-  };
-  // 글쓰기
-  const submitHandler = (e) => {
-    e.preventDefault();
-    firestore.collection('cities').add({
-      value,
-      createAt: Date.now(),
-      createId: currentUser.uid,
-    });
-    setValue('');
-  };
-
   // 글가져오기
-  const getValue = async () => {
-    const write = await firestore.collection('cities').get();
-    write.forEach((document) => {
-      const newObj = {
-        ...document.data(),
-        id: document.id,
-      };
-      setWrite((prev) => [newObj, ...prev]);
-    });
-  };
 
   useEffect(() => {
-    getValue();
-    return () => {
-      getValue();
-      console.log('hi');
-    };
+    firestore
+      .collection('cities')
+      .orderBy('createAt', 'desc')
+      .onSnapshot((snapshot) => {
+        const writeArray = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setWrite(writeArray);
+      });
   }, []);
-
-  console.log(write);
 
   return (
     <>
@@ -154,15 +125,10 @@ const Main = () => {
       </Link>
       <button onClick={handleLogOut}>로그아웃</button>
 
-      <form onSubmit={submitHandler}>
-        <input type="text" value={value} onChange={changeValue} />
-        <button>보내기</button>
-      </form>
-      <div>
-        {write.map((write) => (
-          <div key={write.id}>{write.value}</div>
-        ))}
-      </div>
+      <Form />
+      {write.map((write) => {
+        return <Write key={write.id} write={write} />;
+      })}
     </>
   );
 };

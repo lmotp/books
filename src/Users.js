@@ -30,7 +30,6 @@ export const Users = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initializer);
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-  const [userObj, setUserObj] = useState(null);
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
   };
@@ -45,7 +44,6 @@ export const Users = ({ children }) => {
     const authStateChange = auth.onAuthStateChanged((user) => {
       setCurrentUser(user);
       setLoading(false);
-      setUserObj(user);
     });
     return authStateChange;
   }, []);
