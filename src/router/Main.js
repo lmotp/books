@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useAuthContext } from '../Users';
 import dotenv from 'dotenv';
 import axios from 'axios';
@@ -13,10 +13,10 @@ import '../styles/Main.css';
 dotenv.config();
 
 const Main = () => {
-  const { logout } = useAuthContext();
+  const { logout, currentUser } = useAuthContext();
   const state = useUsersState();
-  const { categories } = state;
-  const { select } = state;
+  const { categories, select } = state;
+  const history = useHistory();
 
   const [items, setItems] = useState([]);
   const [number, setNumber] = useState(0);
@@ -38,6 +38,7 @@ const Main = () => {
   // 로그아웃하기
   const handleLogOut = () => {
     logout();
+    history.push('/');
   };
 
   // 유튜브 api
@@ -84,16 +85,23 @@ const Main = () => {
 
   // 글가져오기
 
-  useEffect(() => {
+  const currentUserUid = (currentUserUid) => {
     firestore
-      .collection('cities')
+      .collection(currentUserUid)
       .orderBy('createAt', 'desc')
       .onSnapshot((snapshot) => {
         const writeArray = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
         setWrite(writeArray);
       });
-  }, []);
+  };
 
+  useEffect(() => {
+    if (currentUser) {
+      currentUserUid(`${currentUser.uid}`);
+    } else {
+      currentUserUid('cities');
+    }
+  }, [currentUser]);
   return (
     <>
       {start &&
@@ -121,7 +129,7 @@ const Main = () => {
       <button onClick={clickPause}>정지</button>
 
       <Link to="/signup">
-        <button>회원가입하러가기 </button>
+        <button>회원가입하러가기</button>
       </Link>
       <button onClick={handleLogOut}>로그아웃</button>
 
@@ -129,6 +137,7 @@ const Main = () => {
       {write.map((write) => {
         return <Write key={write.id} write={write} />;
       })}
+      {currentUser ? <div>{currentUser.email}</div> : <div>게스트</div>}
     </>
   );
 };

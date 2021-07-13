@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { firestore } from '../firebase';
+import { useAuthContext } from '../Users';
 
 export default function Write({ write }) {
+  const { currentUser } = useAuthContext();
   const [changeWrite, setChangeWrite] = useState(false);
   const [newWrite, setNewWrite] = useState('');
+  const cities = 'cities';
 
   // 삭제하기
+  const deleButtonCondition = (currentUserUid) => {
+    firestore.doc(`${currentUserUid}/${write.id}`).delete();
+  };
+
   const deleteButton = async () => {
-    await firestore.doc(`cities/${write.id}`).delete();
+    if (currentUser) {
+      await deleButtonCondition(currentUser.uid);
+    } else {
+      await deleButtonCondition(cities);
+    }
   };
 
   // 바꾸는창 토글
@@ -17,11 +28,19 @@ export default function Write({ write }) {
 
   //내용 바꾸기
 
-  const changeButton = async (e) => {
-    e.preventDefault();
-    await firestore.doc(`cities/${write.id}`).update({
+  const changeButtonCondition = (currentUserUid) => {
+    firestore.doc(`${currentUserUid}/${write.id}`).update({
       value: newWrite,
     });
+  };
+
+  const changeButton = async (e) => {
+    e.preventDefault();
+    if (currentUser) {
+      await changeButtonCondition(currentUser.uid);
+    } else {
+      await changeButtonCondition(cities);
+    }
     setChangeWrite(false);
   };
 

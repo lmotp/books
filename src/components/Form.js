@@ -14,15 +14,23 @@ export default function Form() {
     setValue(value);
   };
 
-  // 글쓰기
-  const submitHandler = (e) => {
-    e.preventDefault();
-    firestore.collection('cities').add({
+  const currentUserUid = (currentUserUid) => {
+    firestore.collection(currentUserUid).add({
       value,
       createAt: Date.now(),
       createId: currentUser.uid,
     });
     setValue('');
+  };
+
+  // 글쓰기
+  const submitHandler = (e) => {
+    e.preventDefault();
+    if (currentUser) {
+      currentUserUid(currentUser.uid);
+    } else {
+      currentUserUid('cities');
+    }
   };
 
   return (
