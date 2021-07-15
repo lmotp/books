@@ -102,6 +102,7 @@ const Main = () => {
       currentUserUid('cities');
     }
   }, [currentUser]);
+
   return (
     <>
       {start &&
@@ -137,7 +138,7 @@ const Main = () => {
       {write.map((write) => {
         return <Write key={write.id} write={write} />;
       })}
-      {currentUser ? <div>{currentUser.email}</div> : <div>게스트</div>}
+      {currentUser ? <div>{currentUser.displayName}</div> : <div>게스트</div>}
     </>
   );
 };

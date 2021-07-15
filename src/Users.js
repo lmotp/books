@@ -39,6 +39,11 @@ export const Users = ({ children }) => {
   const logout = () => {
     return auth.signOut();
   };
+  const changeDisplayName = (name) => {
+    auth.currentUser.updateProfile({
+      displayName: name,
+    });
+  };
 
   useEffect(() => {
     const authStateChange = auth.onAuthStateChanged((user) => {
@@ -53,6 +58,7 @@ export const Users = ({ children }) => {
     signup,
     login,
     logout,
+    changeDisplayName,
   };
 
   return (

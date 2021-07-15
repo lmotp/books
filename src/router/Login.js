@@ -32,9 +32,9 @@ export default function Login() {
           Email
           <input type="email" ref={emailRef} id="email" required></input>
         </label>
-        <label htmlFor="password">
+        <label htmlFor="current-password">
           Password
-          <input type="password" ref={passwordRef} id="password" required></input>
+          <input type="password" ref={passwordRef} id="current-password" required autoComplete="on"></input>
         </label>
         <button disabled={loading} type="submit">
           Log in

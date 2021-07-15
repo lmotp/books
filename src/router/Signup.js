@@ -6,10 +6,26 @@ export default function Signup() {
   const passWordConfirmRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
-  const { signup } = useAuthContext();
+  const displayNameRef = useRef();
+  const { signup, changeDisplayName } = useAuthContext();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [imageSrc, setImageSrc] = useState();
   const history = useHistory();
+
+  const onFileChange = async (e) => {
+    const theFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      setImageSrc(e.currentTarget.result);
+    };
+    reader.readAsDataURL(theFile);
+  };
+
+  const clearImageSrc = (e) => {
+    e.preventDefault();
+    setImageSrc(null);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,6 +37,7 @@ export default function Signup() {
       setError('');
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
+      await changeDisplayName(displayNameRef.current.value);
       history.push('/');
     } catch {
       setError('Failed to create an account');
@@ -37,14 +54,28 @@ export default function Signup() {
           Email
           <input type="email" ref={emailRef} id="email" required></input>
         </label>
+        <label htmlFor="displayName">
+          displayName
+          <input type="text" ref={displayNameRef} id="displayName" required></input>
+        </label>
         <label htmlFor="password">
           Password
-          <input type="password" ref={passwordRef} id="password" required></input>
+          <input type="password" ref={passwordRef} id="password" required autoComplete="on"></input>
         </label>
         <label htmlFor="password-confirm">
           Password Confirmation
-          <input type="password" ref={passWordConfirmRef} id="password-confirm" required></input>
+          <input type="password" ref={passWordConfirmRef} id="password-confirm" required autoComplete="on"></input>
         </label>
+        <label>
+          profileImage
+          <input type="file" onChange={onFileChange} accept="image/*"></input>
+        </label>
+        {imageSrc && (
+          <>
+            <img src={imageSrc} alt="profileImage" width="100px" height="100px" />
+            <button onClick={clearImageSrc}>Clear</button>
+          </>
+        )}
         <button disabled={loading} type="submit">
           Sign up
         </button>
