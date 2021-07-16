@@ -30,6 +30,9 @@ export const Users = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initializer);
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
+  const [imageSrc, setImageSrc] = useState();
+  const [filename, setFilename] = useState();
+
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
   };
@@ -43,6 +46,21 @@ export const Users = ({ children }) => {
     auth.currentUser.updateProfile({
       displayName: name,
     });
+  };
+
+  const onFileChange = (e) => {
+    const theFile = e.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = (e) => {
+      setImageSrc(e.target.result);
+      setFilename(theFile);
+    };
+    reader.readAsDataURL(theFile);
+  };
+
+  const clearImageSrc = (e) => {
+    e.preventDefault();
+    setImageSrc(null);
   };
 
   useEffect(() => {
@@ -59,6 +77,10 @@ export const Users = ({ children }) => {
     login,
     logout,
     changeDisplayName,
+    imageSrc,
+    onFileChange,
+    clearImageSrc,
+    filename,
   };
 
   return (

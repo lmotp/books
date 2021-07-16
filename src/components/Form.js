@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { firestore } from '../firebase';
 import { useAuthContext } from '../Users';
-
+import { storage } from '../firebase';
 export default function Form() {
   const [value, setValue] = useState('');
   const { currentUser } = useAuthContext();
@@ -14,13 +14,15 @@ export default function Form() {
     setValue(value);
   };
 
-  const currentUserUid = (currentUserUid) => {
-    firestore.collection(currentUserUid).add({
-      value,
-      createAt: Date.now(),
-      createId: currentUser.uid,
-    });
-    setValue('');
+  const currentUserUid = async (currentUserUid) => {
+    const fileRef = storage.ref().child(`${currentUser.uid}/${Math.random()}`);
+    await fileRef.putString();
+    // firestore.collection(currentUserUid).add({
+    //   value,
+    //   createAt: Date.now(),
+    //   createId: currentUser.uid,
+    // });
+    // setValue('');
   };
 
   // 글쓰기

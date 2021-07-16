@@ -1,31 +1,18 @@
 import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../Users';
 import { Link, useHistory } from 'react-router-dom';
+import { storage } from '../firebase';
 
 export default function Signup() {
   const passWordConfirmRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const displayNameRef = useRef();
-  const { signup, changeDisplayName } = useAuthContext();
+
+  const { signup, changeDisplayName, onFileChange, imageSrc, clearImageSrc, filename } = useAuthContext();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [imageSrc, setImageSrc] = useState();
   const history = useHistory();
-
-  const onFileChange = async (e) => {
-    const theFile = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = (e) => {
-      setImageSrc(e.currentTarget.result);
-    };
-    reader.readAsDataURL(theFile);
-  };
-
-  const clearImageSrc = (e) => {
-    e.preventDefault();
-    setImageSrc(null);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +25,7 @@ export default function Signup() {
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
       await changeDisplayName(displayNameRef.current.value);
+      await storage.ref().child(filename.name).put();
       history.push('/');
     } catch {
       setError('Failed to create an account');
