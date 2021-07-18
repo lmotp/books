@@ -30,7 +30,7 @@ export const Users = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initializer);
   const [currentUser, setCurrentUser] = useState();
   const [loading, setLoading] = useState(true);
-  const [imageSrc, setImageSrc] = useState();
+  const [imageSrc, setImageSrc] = useState('');
   const [filename, setFilename] = useState();
 
   const signup = (email, password) => {
@@ -60,7 +60,7 @@ export const Users = ({ children }) => {
 
   const clearImageSrc = (e) => {
     e.preventDefault();
-    setImageSrc(null);
+    setImageSrc('');
   };
 
   useEffect(() => {
@@ -81,6 +81,7 @@ export const Users = ({ children }) => {
     onFileChange,
     clearImageSrc,
     filename,
+    setImageSrc,
   };
 
   return (

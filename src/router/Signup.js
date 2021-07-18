@@ -9,14 +9,13 @@ export default function Signup() {
   const passwordRef = useRef();
   const displayNameRef = useRef();
 
-  const { signup, changeDisplayName, onFileChange, imageSrc, clearImageSrc, filename } = useAuthContext();
+  const { signup, changeDisplayName, onFileChange, imageSrc, setImageSrc, clearImageSrc } = useAuthContext();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (passwordRef.current.value !== passWordConfirmRef.current.value) {
       return setError('Passwords do not match');
     }
@@ -25,12 +24,13 @@ export default function Signup() {
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
       await changeDisplayName(displayNameRef.current.value);
-      await storage.ref().child(filename.name).put();
+      await storage.ref().child(`profile/${displayNameRef.current.value}`).putString(imageSrc, 'data_url');
       history.push('/');
     } catch {
       setError('Failed to create an account');
     }
     setLoading(false);
+    setImageSrc('');
   };
 
   return (

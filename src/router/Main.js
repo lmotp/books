@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useAuthContext } from '../Users';
 import dotenv from 'dotenv';
 import axios from 'axios';
 import Youtube from 'react-youtube';
 import { useUsersState } from '../Users';
-import { firestore } from '../firebase';
+import { firestore, storage } from '../firebase';
 import Form from '../components/Form';
 import Write from '../components/Write';
 import '../styles/Main.css';
+import Background from '../components/Background';
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ const Main = () => {
   const [start, setStart] = useState(false);
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
   const [write, setWrite] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   // 에피아이 받기
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -51,24 +53,30 @@ const Main = () => {
   };
 
   // 카테고리 고르기
-  const clickHandler = (e) => {
-    e.preventDefault();
-    switch (e.target.innerText) {
-      case '비발디':
-        setNumber(0);
-        break;
-      case '베토벤':
-        setNumber(1);
-        break;
-      case '모차르트':
-        setNumber(2);
-        break;
-      default:
-        console.error('맞는짝이없습니다.');
-    }
+  const clickHandler = useCallback(
+    (e) => {
+      e.preventDefault();
+      switch (e.target.innerText) {
+        case '비발디':
+          setNumber(0);
+          break;
+        case '베토벤':
+          setNumber(1);
+          break;
+        case '모차르트':
+          setNumber(2);
+          break;
+        default:
+          console.error('맞는짝이없습니다.');
+      }
+      setStart(true);
+    },
+    [setNumber],
+  );
+
+  useEffect(() => {
     response();
-    setStart(true);
-  };
+  }, [number]);
 
   // 시작하고 멈추기
   const videoOnReady = (event) => {
@@ -84,7 +92,6 @@ const Main = () => {
   };
 
   // 글가져오기
-
   const currentUserUid = (currentUserUid) => {
     firestore
       .collection(currentUserUid)
@@ -98,8 +105,12 @@ const Main = () => {
   useEffect(() => {
     if (currentUser) {
       currentUserUid(`${currentUser.uid}`);
+      storage
+        .ref(`profile/${currentUser.displayName}`)
+        .getDownloadURL()
+        .then((rep) => setProfile(rep));
     } else {
-      currentUserUid('cities');
+      currentUserUid('gest');
     }
   }, [currentUser]);
 
@@ -138,7 +149,15 @@ const Main = () => {
       {write.map((write) => {
         return <Write key={write.id} write={write} />;
       })}
-      {currentUser ? <div>{currentUser.displayName}</div> : <div>게스트</div>}
+      <Background />
+      {currentUser ? (
+        <>
+          <div>{currentUser.displayName}</div>
+          {profile && <img src={profile} alt="프로필" width="100" height="100" />}
+        </>
+      ) : (
+        <div>게스트</div>
+      )}
     </>
   );
 };

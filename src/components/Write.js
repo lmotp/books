@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { firestore } from '../firebase';
+import { firestore, storage } from '../firebase';
 import { useAuthContext } from '../Users';
 
 export default function Write({ write }) {
   const { currentUser } = useAuthContext();
   const [changeWrite, setChangeWrite] = useState(false);
   const [newWrite, setNewWrite] = useState('');
-  const cities = 'cities';
+  const gest = 'gest';
 
   // 삭제하기
   const deleButtonCondition = (currentUserUid) => {
@@ -16,8 +16,11 @@ export default function Write({ write }) {
   const deleteButton = async () => {
     if (currentUser) {
       await deleButtonCondition(currentUser.uid);
+      if (write.fileURL) {
+        await storage.refFromURL(write.fileURL).delete();
+      }
     } else {
-      await deleButtonCondition(cities);
+      await deleButtonCondition(gest);
     }
   };
 
@@ -39,7 +42,7 @@ export default function Write({ write }) {
     if (currentUser) {
       await changeButtonCondition(currentUser.uid);
     } else {
-      await changeButtonCondition(cities);
+      await changeButtonCondition(gest);
     }
     setChangeWrite(false);
   };
@@ -51,10 +54,11 @@ export default function Write({ write }) {
     } = e;
     setNewWrite(value);
   };
-
+  console.log('hi');
   return (
     <>
       <h3>{write.value}</h3>
+      {write.fileURL && <img src={write.fileURL} width="100px" height="100px" alt="img" />}
       <button onClick={deleteButton}>삭제</button>
       <button onClick={toggleEditing}>변경</button>
       {changeWrite && (
