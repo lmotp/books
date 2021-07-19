@@ -13,6 +13,9 @@ export default function First() {
       <Link to="/signup">
         <button>회원가입하러가기</button>
       </Link>
+      <Link to="/custom">
+        <button>커스텀하러가기</button>
+      </Link>
     </>
   );
 }

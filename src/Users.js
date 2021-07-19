@@ -32,6 +32,7 @@ export const Users = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState('');
   const [filename, setFilename] = useState();
+  const [background, setBackground] = useState();
 
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
@@ -49,11 +50,11 @@ export const Users = ({ children }) => {
   };
 
   const onFileChange = (e) => {
-    const theFile = e.target.files[0];
+    let theFile = e.target.files[0];
     const reader = new FileReader();
     reader.onloadend = (e) => {
       setImageSrc(e.target.result);
-      setFilename(theFile);
+      setFilename(theFile.name);
     };
     reader.readAsDataURL(theFile);
   };
@@ -82,6 +83,8 @@ export const Users = ({ children }) => {
     clearImageSrc,
     filename,
     setImageSrc,
+    setBackground,
+    background,
   };
 
   return (

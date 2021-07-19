@@ -9,12 +9,11 @@ import { firestore, storage } from '../firebase';
 import Form from '../components/Form';
 import Write from '../components/Write';
 import '../styles/Main.css';
-import Background from '../components/Background';
 
 dotenv.config();
 
 const Main = () => {
-  const { logout, currentUser } = useAuthContext();
+  const { logout, currentUser, background } = useAuthContext();
   const state = useUsersState();
   const { categories, select } = state;
   const history = useHistory();
@@ -149,7 +148,7 @@ const Main = () => {
       {write.map((write) => {
         return <Write key={write.id} write={write} />;
       })}
-      <Background />
+
       {currentUser ? (
         <>
           <div>{currentUser.displayName}</div>
@@ -158,6 +157,7 @@ const Main = () => {
       ) : (
         <div>게스트</div>
       )}
+      {background && <img src={background} alt="배경화면" />}
     </>
   );
 };
