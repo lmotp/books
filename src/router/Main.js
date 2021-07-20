@@ -9,6 +9,7 @@ import { firestore, storage } from '../firebase';
 import Form from '../components/Form';
 import Write from '../components/Write';
 import '../styles/Main.css';
+import '../styles/Public.css';
 
 dotenv.config();
 
@@ -114,7 +115,7 @@ const Main = () => {
   }, [currentUser]);
 
   return (
-    <>
+    <section className="main-section">
       {start &&
         items
           .filter((v) => {
@@ -157,8 +158,8 @@ const Main = () => {
       ) : (
         <div>게스트</div>
       )}
-      {background && <img src={background} alt="배경화면" />}
-    </>
+      {background && <img className="background" src={background} alt="배경화면" />}
+    </section>
   );
 };
 

@@ -1,0 +1,34 @@
+.first-button-set {
+  display: flex;
+  color: #fff;
+}
+
+.login-form form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.login-form form input {
+}
+
+.login-form form input:focus {
+  box-shadow: 0 0px 5px rgba(255, 255, 255, 0.15), inset 0 0px 5px rgba(0, 0, 0, 0.15);
+}
+
+.login-form form button {
+  margin: 20px 0;
+  height: 35px;
+  background: linear-gradient(to right, #eacda3, #d6ae7b);
+  outline: none;
+  border: none;
+  border-radius: 50px;
+  color: whitesmoke;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.login-form form input::placeholder {
+  text-transform: uppercase;
+  color: rgb(197, 197, 197);
+}
