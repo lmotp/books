@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useAuthContext } from '../Users';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 export default function Login() {
   const emailRef = useRef();
@@ -16,7 +16,7 @@ export default function Login() {
       setError('');
       setLoading(true);
       await login(emailRef.current.value, passwordRef.current.value);
-      history.push('/');
+      history.push('/main');
     } catch {
       setError('Failed to Log in');
     }
@@ -24,26 +24,27 @@ export default function Login() {
   };
 
   return (
-    <>
-      <h2>Log in</h2>
+    <div className="login-form">
+      <h2>고독한 독서</h2>
       <div>{error}</div>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">
-          Email
-          <input type="email" ref={emailRef} id="email" required></input>
+          <input type="email" ref={emailRef} id="email" required autoComplete="off" placeholder="id" autoFocus></input>
         </label>
         <label htmlFor="current-password">
-          Password
-          <input type="password" ref={passwordRef} id="current-password" required autoComplete="on"></input>
+          <input
+            type="password"
+            ref={passwordRef}
+            id="current-password"
+            required
+            autoComplete="off"
+            placeholder="password"
+          ></input>
         </label>
         <button disabled={loading} type="submit">
           Log in
         </button>
       </form>
-
-      <div>
-        Need an account?<Link to="/signup">Sign Up</Link>
-      </div>
-    </>
+    </div>
   );
 }

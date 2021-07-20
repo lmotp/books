@@ -1,21 +1,21 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Login from '../components/Login';
+import '../styles/First.css';
 
 export default function First() {
   return (
-    <>
-      <Link to="/main">
-        <button>게스트로 독서하러가기</button>
-      </Link>
-      <Link to="/login">
-        <button>로그인</button>
-      </Link>
-      <Link to="/signup">
-        <button>회원가입하러가기</button>
-      </Link>
-      <Link to="/custom">
-        <button>커스텀하러가기</button>
-      </Link>
-    </>
+    <div className="page">
+      <div className="page-box">
+        <Login />
+        <div className="first-button-set">
+          <Link to="/main">게스트</Link>
+          <span>|</span>
+          <Link to="/signup">회원가입</Link>
+          <span>|</span>
+          <Link to="/custom">커스텀</Link>
+        </div>
+      </div>
+    </div>
   );
 }

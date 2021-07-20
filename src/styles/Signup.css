@@ -1,0 +1,18 @@
+.page.signup {
+  background: url('https://d3udu241ivsax2.cloudfront.net/common/images/v3/bg/join.jpg') no-repeat center;
+}
+
+.signup-form form {
+  text-align: left;
+}
+
+.signup-form form label {
+  color: whitesmoke;
+}
+
+.signup-form form input {
+  display: block;
+}
+
+.signup-form form button {
+}

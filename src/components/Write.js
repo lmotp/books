@@ -54,7 +54,7 @@ export default function Write({ write }) {
     } = e;
     setNewWrite(value);
   };
-  console.log('hi');
+
   return (
     <>
       <h3>{write.value}</h3>
@@ -64,7 +64,7 @@ export default function Write({ write }) {
       {changeWrite && (
         <>
           <form onSubmit={changeButton}>
-            <input type="text" onChange={onChange} value={newWrite} required />
+            <input className="bb-none" type="text" onChange={onChange} value={newWrite} required />
             <button>바꾸깅</button>
           </form>
           <button onClick={toggleEditing}>취소</button>
