@@ -32,3 +32,9 @@
   text-transform: uppercase;
   color: rgb(197, 197, 197);
 }
+
+.profile {
+  width: 50%;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}

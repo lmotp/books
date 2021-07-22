@@ -14,7 +14,7 @@ import '../styles/Public.css';
 dotenv.config();
 
 const Main = () => {
-  const { logout, currentUser, background } = useAuthContext();
+  const { logout, currentUser, background, setBackground } = useAuthContext();
   const state = useUsersState();
   const { categories, select } = state;
   const history = useHistory();
@@ -25,6 +25,7 @@ const Main = () => {
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
   const [write, setWrite] = useState([]);
   const [profile, setProfile] = useState(null);
+  const [gotoLogOut, setGoToLogout] = useState(false);
 
   // 에피아이 받기
   const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY;
@@ -76,6 +77,7 @@ const Main = () => {
 
   useEffect(() => {
     response();
+    return response();
   }, [number]);
 
   // 시작하고 멈추기
@@ -109,55 +111,75 @@ const Main = () => {
         .ref(`profile/${currentUser.displayName}`)
         .getDownloadURL()
         .then((rep) => setProfile(rep));
+      storage
+        .ref(`${currentUser.displayName}/custom/배경화면1.jpg`)
+        .getDownloadURL()
+        .then((rep) => setBackground(rep));
     } else {
       currentUserUid('gest');
     }
   }, [currentUser]);
+  console.log(gotoLogOut);
 
   return (
-    <section className="main-section">
-      {start &&
-        items
-          .filter((v) => {
-            return v.snippet.position === 0;
-          })
-          .map((item) => {
-            const {
-              id,
-              snippet: {
-                resourceId: { videoId },
-              },
-            } = item;
-            return <Youtube key={id} opts={opts} videoId={videoId} onReady={videoOnReady} className="youtube-player" />;
-          })}
+    <section className="main-section ">
+      <div className="main-page-box">
+        <div className="music-button-set">
+          {categories.map((category) => (
+            <button key={category.id} onClick={clickHandler}>
+              {category.category}
+            </button>
+          ))}
+          <div className="play-state-button">
+            <button onClick={clickPlay}>시작</button>
+            <button onClick={clickPause}>정지</button>
+          </div>
+          <Link to="/">
+            <button>홈으로</button>
+          </Link>
+        </div>
 
-      {categories.map((category) => (
-        <button key={category.id} onClick={clickHandler}>
-          {category.category}
-        </button>
-      ))}
+        {start &&
+          items
+            .filter((v) => {
+              return v.snippet.position === 0;
+            })
+            .map((item) => {
+              const {
+                id,
+                snippet: {
+                  resourceId: { videoId },
+                },
+              } = item;
+              return (
+                <Youtube key={id} opts={opts} videoId={videoId} onReady={videoOnReady} className="youtube-player" />
+              );
+            })}
+        <div className="main-box">
+          <div className="main-profile">
+            {currentUser ? (
+              <>
+                <div>{currentUser.displayName}</div>
+                {profile && <img src={profile} alt="프로필" onClick={() => setGoToLogout(!gotoLogOut)} />}
+              </>
+            ) : (
+              <div>게스트</div>
+            )}
+            {gotoLogOut && <button onClick={handleLogOut}>로그아웃</button>}
+          </div>
 
-      <button onClick={clickPlay}>시작</button>
-      <button onClick={clickPause}>정지</button>
+          {!currentUser && (
+            <Link to="/signup">
+              <button>회원가입하러가기</button>
+            </Link>
+          )}
 
-      <Link to="/signup">
-        <button>회원가입하러가기</button>
-      </Link>
-      <button onClick={handleLogOut}>로그아웃</button>
-
-      <Form />
-      {write.map((write) => {
-        return <Write key={write.id} write={write} />;
-      })}
-
-      {currentUser ? (
-        <>
-          <div>{currentUser.displayName}</div>
-          {profile && <img src={profile} alt="프로필" width="100" height="100" />}
-        </>
-      ) : (
-        <div>게스트</div>
-      )}
+          <Form />
+        </div>
+        {write.map((write) => {
+          return <Write key={write.id} write={write} />;
+        })}
+      </div>
       {background && <img className="background" src={background} alt="배경화면" />}
     </section>
   );

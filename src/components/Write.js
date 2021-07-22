@@ -25,7 +25,8 @@ export default function Write({ write }) {
   };
 
   // 바꾸는창 토글
-  const toggleEditing = () => {
+  const toggleEditing = (e) => {
+    e.stopPropagation();
     setChangeWrite((prev) => !prev);
   };
 
@@ -56,20 +57,24 @@ export default function Write({ write }) {
   };
 
   return (
-    <>
-      <h3>{write.value}</h3>
-      {write.fileURL && <img src={write.fileURL} width="100px" height="100px" alt="img" />}
-      <button onClick={deleteButton}>삭제</button>
-      <button onClick={toggleEditing}>변경</button>
+    <div className="write-box">
+      <div className="write-box2">
+        <h3>{write.value}</h3>
+        {write.fileURL && <img className="write-img" src={write.fileURL} alt="img" />}
+        <div className="picture-state-button">
+          <button onClick={deleteButton}>삭제</button>
+          <button onClick={toggleEditing}>변경</button>
+        </div>
+      </div>
       {changeWrite && (
         <>
           <form onSubmit={changeButton}>
-            <input className="bb-none" type="text" onChange={onChange} value={newWrite} required />
+            <input type="text" onChange={onChange} value={newWrite} required />
             <button>바꾸깅</button>
           </form>
           <button onClick={toggleEditing}>취소</button>
         </>
       )}
-    </>
+    </div>
   );
 }

@@ -86,7 +86,7 @@ export const Users = ({ children }) => {
     setBackground,
     background,
   };
-
+  console.log(filename);
   return (
     <AuthContext.Provider value={users}>
       <UserStateContext.Provider value={state}>
