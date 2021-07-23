@@ -10,6 +10,7 @@ import Form from '../components/Form';
 import Write from '../components/Write';
 import '../styles/Main.css';
 import '../styles/Public.css';
+import ProfileChange from '../components/ProfileChange';
 
 dotenv.config();
 
@@ -24,7 +25,8 @@ const Main = () => {
   const [start, setStart] = useState(false);
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
   const [write, setWrite] = useState([]);
-  const [profile, setProfile] = useState(null);
+  const [displayChange, setDisplayChange] = useState(false);
+
   const [gotoLogOut, setGoToLogout] = useState(false);
 
   // 에피아이 받기
@@ -108,18 +110,15 @@ const Main = () => {
     if (currentUser) {
       currentUserUid(`${currentUser.uid}`);
       storage
-        .ref(`profile/${currentUser.displayName}`)
-        .getDownloadURL()
-        .then((rep) => setProfile(rep));
-      storage
         .ref(`${currentUser.displayName}/custom/배경화면1.jpg`)
         .getDownloadURL()
         .then((rep) => setBackground(rep));
     } else {
       currentUserUid('gest');
     }
-  }, [currentUser]);
-  console.log(gotoLogOut);
+  }, [currentUser, setBackground]);
+
+  console.log(currentUser);
 
   return (
     <section className="main-section ">
@@ -160,12 +159,27 @@ const Main = () => {
             {currentUser ? (
               <>
                 <div>{currentUser.displayName}</div>
-                {profile && <img src={profile} alt="프로필" onClick={() => setGoToLogout(!gotoLogOut)} />}
+                {currentUser.photoURL && (
+                  <img
+                    src={currentUser.photoURL}
+                    alt="프로필"
+                    onClick={() => {
+                      setGoToLogout(!gotoLogOut);
+                      setDisplayChange(false);
+                    }}
+                  />
+                )}
               </>
             ) : (
               <div>게스트</div>
             )}
-            {gotoLogOut && <button onClick={handleLogOut}>로그아웃</button>}
+            {gotoLogOut && (
+              <>
+                <button onClick={handleLogOut}>로그아웃</button>
+                <button onClick={() => setDisplayChange((prev) => !prev)}>프로필변경</button>
+                {displayChange && <ProfileChange />}
+              </>
+            )}
           </div>
 
           {!currentUser && (

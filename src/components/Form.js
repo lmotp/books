@@ -20,6 +20,7 @@ export default function Form() {
     if (currentUserUid !== 'gest' && imageSrc !== '') {
       const fileRef = storage.ref().child(`${currentUser.displayName}/${uuidv4()}`);
       const response = await fileRef.putString(imageSrc, 'data_url');
+      console.log(response);
       fileURL = await response.ref.getDownloadURL();
     }
     firestore.collection(currentUserUid).add({
@@ -47,11 +48,11 @@ export default function Form() {
       <input type="text" value={value} onChange={changeValue} />
       {currentUser && (
         <>
-          <input type="file" onChange={onFileChange} accept="image/*"></input>
+          <input type="file" onChange={onFileChange(setImageSrc)} accept="image/*"></input>
           {imageSrc && (
             <>
               <img src={imageSrc} alt="이미지소스" width="100px" height="100px" />
-              <button onClick={clearImageSrc}>Clear</button>
+              <button onClick={clearImageSrc(setImageSrc)}>Clear</button>
             </>
           )}
         </>

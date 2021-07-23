@@ -24,8 +24,11 @@ export default function Signup() {
       setError('');
       setLoading(true);
       await signup(emailRef.current.value, passwordRef.current.value);
-      await changeDisplayName(displayNameRef.current.value);
-      await storage.ref().child(`profile/${displayNameRef.current.value}`).putString(imageSrc, 'data_url');
+      const photoUrl = await (
+        await storage.ref().child(`profile/${displayNameRef.current.value}`).putString(imageSrc, 'data_url')
+      ).ref.getDownloadURL();
+      await changeDisplayName(displayNameRef.current.value, photoUrl);
+
       history.push('/');
     } catch {
       setError('Failed to create an account');
@@ -54,12 +57,12 @@ export default function Signup() {
             <input type="password" ref={passWordConfirmRef} id="password-confirm" required autoComplete="off"></input>
 
             <label>프로필사진</label>
-            <input className="profile" type="file" onChange={onFileChange} accept="image/*"></input>
+            <input className="profile" type="file" onChange={onFileChange(setImageSrc)} accept="image/*"></input>
 
             {imageSrc && (
               <p>
                 <img src={imageSrc} alt="profileImage" width="100px" height="100px" />
-                <button onClick={clearImageSrc}>Clear</button>
+                <button onClick={clearImageSrc(setImageSrc)}>Clear</button>
               </p>
             )}
             <button disabled={loading} type="submit">

@@ -43,25 +43,26 @@ export const Users = ({ children }) => {
   const logout = () => {
     return auth.signOut();
   };
-  const changeDisplayName = (name) => {
+  const changeDisplayName = (name, src) => {
     auth.currentUser.updateProfile({
       displayName: name,
+      photoURL: src,
     });
   };
 
-  const onFileChange = (e) => {
+  const onFileChange = (changeImageSrc) => (e) => {
     let theFile = e.target.files[0];
     const reader = new FileReader();
     reader.onloadend = (e) => {
-      setImageSrc(e.target.result);
+      changeImageSrc(e.target.result);
       setFilename(theFile.name);
     };
     reader.readAsDataURL(theFile);
   };
 
-  const clearImageSrc = (e) => {
+  const clearImageSrc = (changeImageSrc) => (e) => {
     e.preventDefault();
-    setImageSrc('');
+    changeImageSrc('');
   };
 
   useEffect(() => {
@@ -86,7 +87,6 @@ export const Users = ({ children }) => {
     setBackground,
     background,
   };
-  console.log(filename);
   return (
     <AuthContext.Provider value={users}>
       <UserStateContext.Provider value={state}>

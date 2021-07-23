@@ -25,7 +25,6 @@ export default function Login() {
 
   return (
     <div className="login-form">
-      <h2>고독한 독서</h2>
       <div>{error}</div>
       <form onSubmit={handleSubmit}>
         <label htmlFor="email">

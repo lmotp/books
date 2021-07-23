@@ -3,9 +3,10 @@ import { firestore, storage } from '../firebase';
 import { useAuthContext } from '../Users';
 
 export default function Write({ write }) {
-  const { currentUser } = useAuthContext();
+  const { currentUser, onFileChange, clearImageSrc } = useAuthContext();
   const [changeWrite, setChangeWrite] = useState(false);
   const [newWrite, setNewWrite] = useState('');
+  const [newImageSrc, setNewImageSrc] = useState('');
   const gest = 'gest';
 
   // 삭제하기
@@ -35,6 +36,7 @@ export default function Write({ write }) {
   const changeButtonCondition = (currentUserUid) => {
     firestore.doc(`${currentUserUid}/${write.id}`).update({
       value: newWrite,
+      fileURL: newImageSrc || null,
     });
   };
 
@@ -42,6 +44,8 @@ export default function Write({ write }) {
     e.preventDefault();
     if (currentUser) {
       await changeButtonCondition(currentUser.uid);
+      setNewImageSrc('');
+      setNewWrite('');
     } else {
       await changeButtonCondition(gest);
     }
@@ -69,7 +73,14 @@ export default function Write({ write }) {
       {changeWrite && (
         <>
           <form onSubmit={changeButton}>
-            <input type="text" onChange={onChange} value={newWrite} required />
+            <input type="text" onChange={onChange} value={newWrite} />
+            <input type="file" onChange={onFileChange(setNewImageSrc)} accept="image/*"></input>
+            {newImageSrc && (
+              <>
+                <img src={newImageSrc} alt="이미지소스" width="100px" height="100px" />
+                <button onClick={clearImageSrc(setNewImageSrc)}>Clear</button>
+              </>
+            )}
             <button>바꾸깅</button>
           </form>
           <button onClick={toggleEditing}>취소</button>
