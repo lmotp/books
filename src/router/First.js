@@ -13,7 +13,6 @@ export default function First() {
 
   return (
     <>
-      (
       <div className="page">
         <div className="page-box">
           <h2>고독한 독서</h2>

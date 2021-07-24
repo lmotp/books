@@ -33,6 +33,7 @@ export const Users = ({ children }) => {
   const [imageSrc, setImageSrc] = useState('');
   const [filename, setFilename] = useState();
   const [background, setBackground] = useState();
+  const [userObj, setUserObj] = useState(null);
 
   const signup = (email, password) => {
     return auth.createUserWithEmailAndPassword(email, password);
@@ -86,6 +87,8 @@ export const Users = ({ children }) => {
     setImageSrc,
     setBackground,
     background,
+    setUserObj,
+    userObj,
   };
   return (
     <AuthContext.Provider value={users}>

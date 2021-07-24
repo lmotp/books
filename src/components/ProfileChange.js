@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { auth, storage } from '../firebase';
 import { useAuthContext } from '../Users';
 
-export default function ProfileChange() {
-  const { currentUser, onFileChange } = useAuthContext();
+function ProfileChange() {
+  const { currentUser, onFileChange, setUserObj } = useAuthContext();
   // const newDisplayNameRef = useRef();
   const [newPhotoURL, setNewPhotoURL] = useState('');
+
+  const refreshUser = () => {
+    setUserObj({
+      displayName: currentUser.displayName,
+      photoURL: currentUser.photoURL,
+    });
+  };
 
   const displayChange = async () => {
     const photoUrl = await (
@@ -16,8 +23,8 @@ export default function ProfileChange() {
       displayName: currentUser.displayName,
       photoURL: photoUrl,
     });
+    refreshUser();
   };
-
   return (
     <>
       <div>{currentUser.displayName}</div>
@@ -31,3 +38,5 @@ export default function ProfileChange() {
     </>
   );
 }
+
+export default memo(ProfileChange);

@@ -118,8 +118,6 @@ const Main = () => {
     }
   }, [currentUser, setBackground]);
 
-  console.log(currentUser);
-
   return (
     <section className="main-section ">
       <div className="main-page-box">
