@@ -20,8 +20,8 @@ export default function Form() {
     if (currentUserUid !== 'gest' && imageSrc !== '') {
       const fileRef = storage.ref().child(`${currentUser.displayName}/${uuidv4()}`);
       const response = await fileRef.putString(imageSrc, 'data_url');
-      console.log(response);
       fileURL = await response.ref.getDownloadURL();
+      console.log(fileURL);
     }
     firestore.collection(currentUserUid).add({
       value,

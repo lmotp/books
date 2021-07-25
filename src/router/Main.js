@@ -26,7 +26,7 @@ const Main = () => {
   const [playerPlayVideo, setPlayerPlayVideo] = useState(false);
   const [write, setWrite] = useState([]);
   const [displayChange, setDisplayChange] = useState(false);
-
+  const [targetNumber, setTargetNumber] = useState(0);
   const [gotoLogOut, setGoToLogout] = useState(false);
 
   // 에피아이 받기
@@ -95,6 +95,19 @@ const Main = () => {
     playerPlayVideo.target.pauseVideo();
   };
 
+  const clickNext = () => {
+    if (items.length - 1 <= targetNumber) {
+      return setTargetNumber(0);
+    }
+    setTargetNumber((prev) => prev + 1);
+  };
+  const clickPrev = () => {
+    if (targetNumber <= 0) {
+      return setTargetNumber(items.length - 1);
+    }
+    setTargetNumber((prev) => prev - 1);
+  };
+
   // 글가져오기
   const currentUserUid = (currentUserUid) => {
     firestore
@@ -110,13 +123,13 @@ const Main = () => {
     if (currentUser) {
       currentUserUid(`${currentUser.uid}`);
       storage
-        .ref(`${currentUser.displayName}/custom/배경화면1.jpg`)
+        .ref(`backgroundImage/bg${number + 1}.jpg`)
         .getDownloadURL()
         .then((rep) => setBackground(rep));
     } else {
       currentUserUid('gest');
     }
-  }, [currentUser, setBackground]);
+  }, [currentUser, setBackground, number]);
 
   return (
     <section className="main-section ">
@@ -130,6 +143,8 @@ const Main = () => {
           <div className="play-state-button">
             <button onClick={clickPlay}>시작</button>
             <button onClick={clickPause}>정지</button>
+            <button onClick={clickNext}>다음</button>
+            <button onClick={clickPrev}>이전</button>
           </div>
           <Link to="/">
             <button>홈으로</button>
@@ -139,7 +154,7 @@ const Main = () => {
         {start &&
           items
             .filter((v) => {
-              return v.snippet.position === 0;
+              return v.snippet.position === targetNumber;
             })
             .map((item) => {
               const {
