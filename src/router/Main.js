@@ -131,6 +131,13 @@ const Main = () => {
     }
   }, [currentUser, setBackground, number]);
 
+  console.log(displayChange);
+
+  // 프로필변경 취소
+  const profileCancle = () => {
+    setDisplayChange((prev) => !prev);
+  };
+
   return (
     <section className="main-section ">
       <div className="main-page-box">
@@ -189,8 +196,8 @@ const Main = () => {
             {gotoLogOut && (
               <>
                 <button onClick={handleLogOut}>로그아웃</button>
-                <button onClick={() => setDisplayChange((prev) => !prev)}>프로필변경</button>
-                {displayChange && <ProfileChange />}
+                <button onClick={profileCancle}>프로필변경</button>
+                {displayChange && <ProfileChange profileCancle123={profileCancle} />}
               </>
             )}
           </div>

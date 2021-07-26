@@ -39,12 +39,9 @@ export default function First() {
             )}
             <span>|</span>
             <Link to="/signup">회원가입</Link>
-            <span>|</span>
-            <Link to="/custom">커스텀</Link>
           </div>
         </div>
       </div>
-      )
     </>
   );
 }
